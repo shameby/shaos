@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+package data;
+
+service Data {
+    rpc Get (GetRequest) returns (GetReply) {}
+    rpc Put (stream PutRequest) returns (PutReply) {}
+}
+
+message GetReply {
+    bytes data = 1;
+}
+
+message GetRequest {
+    string name = 1;
+}
+
+message PutReply {
+    string name = 1;
+}
+
+message PutRequest {
+    string name = 1;
+    bytes data = 2;
+}
