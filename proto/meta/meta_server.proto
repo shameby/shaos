@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+package meta;
+
+service Meta {
+    rpc CreateBucket(CreateBucketReq) returns (CreateBucketReply) {}
+    rpc GetMetaById (GetByIdRequest) returns (GetByIdReply) {}
+    rpc PutMeta (PutMetaRequest) returns (PutMetaReply) {}
+}
+
+message CreateBucketReq {
+    string name = 1;
+}
+
+message CreateBucketReply {
+    string name = 1;
+}
+
+message GetByIdRequest {
+    string id = 1;
+    string bucket = 2;
+}
+
+message GetByIdReply {
+    string id = 1;
+    string fileName = 2;
+    string serverAppKey = 3;
+    int32 version = 4;
+}
+
+message PutMetaRequest {
+    string fileName = 1;
+    string serverAppKey = 2;
+    string bucket = 3;
+}
+
+message PutMetaReply {
+    string id = 1;
+}

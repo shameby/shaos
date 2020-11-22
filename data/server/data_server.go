@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"context"
 
-	pb "shaos/data/proto"
+	pb "shaos/proto/data"
 )
 
 type DataServer struct{}

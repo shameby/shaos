@@ -4,16 +4,17 @@ import (
 	"net"
 	"log"
 	_ "shaos/util/redisC"
-	pb "shaos/data/proto"
+	pb "shaos/proto/data"
 	"shaos/data/heartbeat"
 	"shaos/data/server"
+	"shaos/data/conf"
 
 	"google.golang.org/grpc"
 )
 
 func main() {
 	go heartbeat.StartHearBeat()
-	lis, err := net.Listen("tcp", ":8081")
+	lis, err := net.Listen("tcp", ":"+*conf.BaseConfig.Port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

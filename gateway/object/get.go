@@ -8,15 +8,13 @@ import (
 	"github.com/gorilla/mux"
 
 	"shaos/gateway/heartbeat"
-	pb "shaos/gateway/proto"
+	pb "shaos/proto/data"
 	. "shaos/gateway/types"
 	"shaos/gateway/code"
 )
 
-
-
 func GetHandler(resp http.ResponseWriter, req *http.Request) {
-	addr := heartbeat.ChooseRandomDataServer()
+	_, addr := heartbeat.ChooseRandomDataServer()
 	conn, err := grpc.Dial(addr, grpc.WithInsecure())
 	if err != nil {
 		AjaxResp(resp, code.ModulesFuncErr, err.Error(), "")

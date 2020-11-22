@@ -1,52 +1,39 @@
 package heartbeat
 
 import (
-	"time"
-	"sync"
+	"fmt"
+
 	"math/rand"
+	"shaos/util/redisC"
 )
 
-type dst struct {
-	m map[string]time.Time
-	sync.RWMutex
-}
-
-var dataServers *dst
-
-func init() {
-	dataServers = &dst{
-		m: make(map[string]time.Time),
-	}
-}
-
-func removeExpiredDataServer() {
-	for {
-		time.Sleep(5 * time.Second)
-		dataServers.Lock()
-		for s, t := range dataServers.m {
-			if t.Add(10 * time.Second).Before(time.Now()) {
-				delete(dataServers.m, s)
-			}
-		}
-		dataServers.Unlock()
-	}
-}
-
 func getDataServers() []string {
-	dataServers.RLock()
-	defer dataServers.RUnlock()
-	ds := make([]string, 0, len(dataServers.m))
-	for s := range dataServers.m {
-		ds = append(ds, s)
+	list, err := redisC.Conn.Key.Keys(0, "dh:*").Strings()
+	if err != nil {
+		fmt.Println("err when get data_server list")
+		return nil
 	}
-	return ds
+	return list
 }
 
-func ChooseRandomDataServer() string {
-	ds := getDataServers()
-	n := len(ds)
-	if n == 0 {
-		return ""
+func ChooseRandomDataServer() (appKey string, host string) {
+	var (
+		err  error
+	)
+	for rpTime := 0; rpTime < 3; rpTime++ {
+		ds := getDataServers()
+		n := len(ds)
+		if n == 0 {
+			continue
+		}
+		appKey = ds[rand.Intn(n)]
+		host, err = redisC.Conn.String.Get(0, ds[rand.Intn(n)]).String()
+		if err != nil {
+			continue
+		}
+		if host != "" {
+			break
+		}
 	}
-	return ds[rand.Intn(n)]
+	return
 }

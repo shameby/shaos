@@ -6,8 +6,8 @@ import (
 
 	"shaos/gateway/types"
 	"shaos/gateway/router"
-	"shaos/gateway/heartbeat"
 	_ "shaos/util/redisC"
+	"shaos/gateway/conf"
 
 	"github.com/json-iterator/go"
 )
@@ -29,12 +29,10 @@ func TokenMiddleware(next http.Handler) http.Handler {
 }
 
 func main() {
-	go heartbeat.ListenHeartbeat()
-
 	r := router.GenRouter()
 	r.Use(TokenMiddleware)
-	log.Printf("start listening on " + "8080")
-	server := &http.Server{Addr: ":" + "8080", Handler: r}
+	log.Println(*conf.BaseConfig.ServerName + " start listening on " + *conf.BaseConfig.Port)
+	server := &http.Server{Addr: ":" + *conf.BaseConfig.Port, Handler: r}
 	defer server.Close()
 	log.Fatal(server.ListenAndServe())
 }

@@ -9,9 +9,9 @@ import (
 
 var (
 	pool        *redis.Pool
-	redisHost         = "118.24.255.170:6379"
-	redisPass         = "hansliaoEva613"
-	redisPrefix int64 = 20
+	redisHost         = "127.0.0.1:6379"
+	redisPass         = "orcorc520"
+	redisPrefix int64 = 0
 )
 
 //newRedisPool:创建redis连接池

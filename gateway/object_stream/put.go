@@ -3,8 +3,7 @@ package objectStream
 import (
 	"io"
 	"context"
-
-	pb "shaos/gateway/proto"
+	dataPb "shaos/proto/data"
 
 	"google.golang.org/grpc"
 )
@@ -12,7 +11,7 @@ import (
 type PutStream struct {
 	writer *io.PipeWriter
 	c      chan error
-	resp   *pb.PutReply
+	resp   *dataPb.PutReply
 }
 
 func NewPutStream(server, objName string) *PutStream {
@@ -26,15 +25,15 @@ func NewPutStream(server, objName string) *PutStream {
 			return
 		}
 		defer conn.Close()
-		client := pb.NewDataClient(conn)
+		client := dataPb.NewDataClient(conn)
 		buffer := make([]byte, 1048576) // 1M to send each time
 		stream, err := client.Put(context.Background())
-		stream.SendMsg(&pb.PutRequest{Name: objName})
+		stream.SendMsg(&dataPb.PutRequest{Name: objName})
 		for {
 			bytesReads, err := reader.Read(buffer)
 			if err != nil {
 				if err == io.EOF {
-					if err := stream.Send(&pb.PutRequest{Data: buffer[:bytesReads]}); err != nil {
+					if err := stream.Send(&dataPb.PutRequest{Data: buffer[:bytesReads]}); err != nil {
 						c <- err
 						return
 					}
@@ -43,7 +42,7 @@ func NewPutStream(server, objName string) *PutStream {
 				c <- err
 				return
 			}
-			if err := stream.Send(&pb.PutRequest{Data: buffer[:bytesReads]}); err != nil {
+			if err := stream.Send(&dataPb.PutRequest{Data: buffer[:bytesReads]}); err != nil {
 				c <- err
 				return
 			}
@@ -67,6 +66,6 @@ func (w *PutStream) Close() error {
 	return <-w.c
 }
 
-func (w PutStream) GetResp() *pb.PutReply {
+func (w PutStream) GetResp() *dataPb.PutReply {
 	return w.resp
 }

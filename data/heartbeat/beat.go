@@ -5,14 +5,15 @@ import (
 	"time"
 
 	"shaos/util/redisC"
+	"shaos/data/conf"
 )
 
 func StartHearBeat() {
 	for {
-		_, err := redisC.Conn.Ps.Publish(0, "heartbeat", "localhost:8081").Int()
+		err := redisC.Conn.String.Set(0, "dh:"+conf.BaseConfig.AppKey, "localhost:"+*conf.BaseConfig.Port, 5).Error()
 		if err != nil {
 			fmt.Println("pub heartbeat err:", err)
 		}
-		time.Sleep(5 * time.Second)
+		time.Sleep(3 * time.Second)
 	}
 }

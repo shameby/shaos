@@ -11,7 +11,7 @@ import (
 	"shaos/gateway/object_stream"
 	"shaos/gateway/code"
 	. "shaos/gateway/types"
-	pb "shaos/gateway/proto"
+	pb "shaos/proto/data"
 )
 
 func PutHandler(resp http.ResponseWriter, req *http.Request) {
@@ -38,7 +38,7 @@ func storeObject(r io.Reader, objName string) (*pb.PutReply, error) {
 }
 
 func putStream(objName string) (*objectStream.PutStream, error) {
-	server := heartbeat.ChooseRandomDataServer()
+	_, server := heartbeat.ChooseRandomDataServer()
 	if server == "" {
 		return nil, errors.New("cannot find any dataServer")
 	}
