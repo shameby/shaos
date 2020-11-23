@@ -10,4 +10,5 @@ require (
 	github.com/json-iterator/go v1.1.10
 	github.com/storezhang/gox v1.2.25
 	google.golang.org/grpc v1.33.2
+	google.golang.org/grpc/examples v0.0.0-20201121004645-9da74c039bbf
 )

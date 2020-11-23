@@ -4,18 +4,18 @@ import (
 	"net/http"
 	"context"
 
-	"google.golang.org/grpc"
 	"github.com/gorilla/mux"
 
 	"shaos/gateway/heartbeat"
 	pb "shaos/proto/data"
 	. "shaos/gateway/types"
 	"shaos/gateway/code"
+	"shaos/util/grpcP"
 )
 
 func GetHandler(resp http.ResponseWriter, req *http.Request) {
 	_, addr := heartbeat.ChooseRandomDataServer()
-	conn, err := grpc.Dial(addr, grpc.WithInsecure())
+	conn, err := grpcP.GetConn(addr)
 	if err != nil {
 		AjaxResp(resp, code.ModulesFuncErr, err.Error(), "")
 		return

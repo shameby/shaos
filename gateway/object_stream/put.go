@@ -3,9 +3,9 @@ package objectStream
 import (
 	"io"
 	"context"
-	dataPb "shaos/proto/data"
 
-	"google.golang.org/grpc"
+	dataPb "shaos/proto/data"
+	"shaos/util/grpcP"
 )
 
 type PutStream struct {
@@ -19,12 +19,11 @@ func NewPutStream(server, objName string) *PutStream {
 	c := make(chan error)
 	ps := &PutStream{writer, c, nil}
 	go func() {
-		conn, err := grpc.Dial(server, grpc.WithInsecure())
+		conn, err := grpcP.GetConn(server)
 		if err != nil {
 			c <- err
 			return
 		}
-		defer conn.Close()
 		client := dataPb.NewDataClient(conn)
 		buffer := make([]byte, 1048576) // 1M to send each time
 		stream, err := client.Put(context.Background())
